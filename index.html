@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagina de prueba</title>
+    <!-- importar materialize 1.0 css desde el cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- importar materialize 1.0 js desde el cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!--importar google icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+
+<body>
+    <!--crear formulario para añadir jugadores con un script js con el atributo nombre y el boton añadir-->
+    <div class="row">
+        <div class="card-panel col l8 offset-l2">
+            <div class="row">
+                <div id="añadir" class="col l6 offset-l3 gray ">
+                    <center>
+                        <h2>Añadir jugadores</h2>
+                        <div class="input-field">
+
+                            <label for="nombre">Nombre</label>
+                            <input type="text" name="nombre" id="nombre">
+                        </div>
+                        <!-- añadir un boton con el material icon de "send" que llame la funcion "nuevoJugador"-->
+                        <h5>jugadores</h5>
+                        <ul class="collection">
+                            <div id="jugadoresDiv"></div>
+
+                        </ul>
+                        <button class="btn waves-effect waves-light" type="submit" name="action"
+                            onclick="nuevoJugador()">Añadir
+                            <i class="material-icons right">add</i>
+                        </button>
+                        <!-- añadir el boton de color rojo comenzar y el simbolo send-->
+                        <button onclick="comenzar()" class="btn waves-effect waves-light red" type="submit"
+                            name="action">Comenzar
+                            <i class="material-icons right">send</i>
+                        </button>
+                        <br>
+                        <br>
+
+                    </center>
+                </div>
+
+            </div>
+            <br>
+            <div class="row">
+                <!-- tabla con todas las partidas de un juego de cariocas -->
+                <div class="col l10 offset-l1 grey lighten-3 " id="divPartida" style="visibility: hidden;">
+                    <table id="partida" >
+                        <thead>
+                            <tr id="thead">
+                                <th>Ronda</th>
+
+                            </tr>
+                        </thead>
+                        <!-- generar un tr para cada ronda las rondas son: 2 trios, 1 escala y 1 trio, 2 escalas, 3 trios, etc -->
+                        <tbody>
+                            <tr id="ronda1">
+                                <td>2 trios</td>
+                            </tr>
+                            <tr id="ronda2">
+                                <td>1 escala y 1 trio</td>
+                            </tr>
+                            <tr id="ronda3">
+                                <td>2 escalas</td>
+                            </tr>
+                            <tr id="ronda4">
+                                <td>3 trios</td>
+                            </tr>
+                            <tr id="ronda5">
+                                <td>2 trios y 1 escala</td>
+                            </tr>
+                            <tr id="ronda6">
+                                <td>1 trio y 2 escalas</td>
+                            </tr>
+                            <tr id="ronda7">
+                                <td>3 escalas</td>
+                            </tr>
+                            <tr id="ronda8">
+                                <td>4 trios </td>
+                            </tr>
+                            <tr id="ronda9">
+                                <td>Escala sucia</td>
+                            </tr>
+                            <tr id="ronda10">
+                                <td>Escala real</td>
+                            </tr>
+
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="black white-text"
+        style="position: fixed ;bottom: 0px; width: 100%; height: fit-content; min-height: 35px;">
+        <!-- puntajes por jugador de acuerdo al array "jugadores" y "puntuaciones" jugadores[0]:puntuaciones[0] -->
+        <center>
+            <p id="p"></p>
+        </center>
+
+    </footer>
+    <script>
+        var jugadores = [];
+        puntuaciones = [];
+        //crear una funcion que reciba el nombre del jugador y lo añada a la coleccion cuando se presiona el boton "nuevoJugador"
+        function nuevoJugador() {
+            var nombre = document.getElementById("nombre").value;
+            if (nombre!=""){
+
+                jugadores.push(nombre);
+                M.toast({
+                    html: 'Jugador: "'+nombre+'" añadido',
+                    classes: 'rounded green'
+                });
+                document.getElementById("nombre").value = "";
+                str = "Jugadores: ";
+                str2="";
+                jugadores.forEach(e => {
+                    str += e + " ";
+                    str2+= '<li class="collection-item"><div>'+e+'<a onclick="eliminar(\''+e+'\')" class="secondary-content"><i class="material-icons">delete</i></a></div></li>';
+                });
+                document.getElementById("p").innerHTML = str;
+                document.getElementById("jugadoresDiv").innerHTML = str2;
+            }else{
+                
+            }
+        }
+        //crear una funcion "comenzar" que esconda el formulario de añadir y modifique la tabla añadiendo los jugadores como columnas
+        function comenzar() {
+            if (jugadores.length != 0) {
+
+                document.getElementById("añadir").style.display = "none";
+                thead = document.getElementById("thead");
+                var str = "<tr><th>Rondas</th>";
+                for (var i = 0; i < jugadores.length; i++) {
+                    str += "<th>" + jugadores[i] + "</th>";
+                }
+                thead.innerHTML = str + "</tr>";
+                //generar en cada row de la tabla despues del td existente por cada jugador un td con un input numerico para que el jugador pueda introducir su puntuacion
+                for (var r = 1; r < 11; r++) {
+                    var ronda = document.getElementById("ronda" + r);
+                    str = ronda.cells[0].outerHTML;
+                    for (var i = 0; i < jugadores.length; i++) {
+                        str += "<td><input onchange='calcular()'type='number' value='0' id='ronda" + r + "jugador" + i + "'></td>";
+                    }
+                    ronda.innerHTML = str;
+                }
+                document.getElementById("divPartida").style.visibility = "visible";
+            } else {
+                alert("No hay jugadores");
+            }
+        }
+        function calcular() {
+            puntuaciones = [];
+            //sumar la puntuacion de un jugador en todas las rondas;
+            for (j = 0; j < jugadores.length; j++) {
+
+
+
+                puntuacion = 0;
+                for (var r = 1; r < 11; r++) {
+
+                    puntuacion += parseInt(document.getElementById("ronda" + r + "jugador" + j).value);
+
+
+                }
+                puntuaciones.push(puntuacion);
+            }
+            str2 = "";
+            for (let i = 0; i < jugadores.length; i++) {
+                str2 += jugadores[i] + ": " + puntuaciones[i] + " - ";
+
+            }
+            document.getElementById("p").innerHTML = str2;
+        }
+        function eliminar(e) {
+            for (let i = 0; i< jugadores.length; i++) {
+                if (jugadores[i] == e) {
+                    M.toast({
+                        html: 'Jugador '+jugadores[i]+' ha sido eliminado',
+                        classes: 'rounded'
+                    });
+                    jugadores.splice(i, 1);
+                }
+               
+            }
+            str = "Jugadores: ";
+            str2="";
+            jugadores.forEach(e => {
+                str += e + " ";
+                str2+= '<li class="collection-item"><div>'+e+'<a onclick="eliminar(\''+e+'\')" class="secondary-content"><i class="material-icons">delete</i></a></div></li>';
+            });
+            document.getElementById("p").innerHTML = str;
+            document.getElementById("jugadoresDiv").innerHTML = str2;
+        }
+    </script>
+
+</body>
+
+</html>
