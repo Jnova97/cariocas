@@ -96,7 +96,7 @@ var jugadores = [];
             guardar();
         }
         function guardar() {
-            sessionStorage.setItem("jugadores", JSON.stringify(jugadores));
+            localStorage.setItem("jugadores", JSON.stringify(jugadores));
             M.toast({
                 html: 'partida guardada',
                 classes: 'rounded green lighten-2 black-text'
@@ -129,14 +129,14 @@ var jugadores = [];
         function load() {
             encontrada = false;
             //verificar si se encontro el array "jugadores" en el sessionStorage y si es asi generar un boolean encontrada
-            if (sessionStorage.getItem("jugadores") != null) {
+            if (localStorage.getItem("jugadores") != null) {
                 encontrada = true;
             }
             //emitir una alerta de partida guardada si encontrada es true y preguntar si se desea cargar la partida
             if (encontrada) {
                 if (confirm("¿Desea cargar la partida?")) {
 
-                    jugadores = JSON.parse(sessionStorage.getItem("jugadores"));
+                    jugadores = JSON.parse(localStorage.getItem("jugadores"));
                     cargar();
                     comenzar();
                     jugadores.forEach(function (jugador) {
@@ -167,7 +167,7 @@ var jugadores = [];
                     });
                 } else {
                     if (confirm("¿Desea eliminar la partida?")) {
-                        sessionStorage.removeItem("jugadores");
+                        localStorage.removeItem("jugadores");
                         M.toast({
                             html: 'Partida eliminada',
                             classes: 'rounded red lighten-2 black-text'
