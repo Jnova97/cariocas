@@ -12,30 +12,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!--importar google icons-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Lobster&display=swap" rel="stylesheet">
-    <script src="script.js" type="text/javascript">
-    </script>
-    <link rel="stylesheet" href="style.css">
+
 </head>
 
-<body onload="load()" class="grey">
+<body>
     <!--crear formulario para añadir jugadores con un script js con el atributo nombre y el boton añadir-->
     <div class="row">
-        <div class="card-panel col l8 offset-l2 orange lighten-5 " style="border-radius: 10px;">
+        <div class="card-panel col l8 offset-l2">
             <div class="row">
                 <div id="añadir" class="col l6 offset-l3 gray ">
                     <center>
-                        <h2>Cariocas</h2>
-                        <h4>Añadir jugadores</h4>
+                        <h2>Añadir jugadores</h2>
                         <div class="input-field">
 
                             <label for="nombre">Nombre</label>
                             <input type="text" name="nombre" id="nombre">
                         </div>
                         <!-- añadir un boton con el material icon de "send" que llame la funcion "nuevoJugador"-->
-                        <h5>Jugadores</h5>
+                        <h5>jugadores</h5>
                         <ul class="collection">
                             <div id="jugadoresDiv"></div>
 
@@ -60,10 +54,7 @@
             <div class="row">
                 <!-- tabla con todas las partidas de un juego de cariocas -->
                 <div class="col l10 offset-l1 grey lighten-3 " id="divPartida" style="visibility: hidden;">
-                    <h2 class="center">Partida En Curso</h2>
-                    <a class="btn right orange black-text" onclick="guardar()"> <i
-                            class="material-icons right">save</i>guardar</a>
-                    <table id="partida">
+                    <table id="partida" >
                         <thead>
                             <tr id="thead">
                                 <th>Ronda</th>
@@ -104,7 +95,7 @@
                             </tr>
 
                         </tbody>
-
+                        
                     </table>
                 </div>
             </div>
@@ -119,7 +110,101 @@
         </center>
 
     </footer>
+    <script>
+        var jugadores = [];
+        puntuaciones = [];
+        //crear una funcion que reciba el nombre del jugador y lo añada a la coleccion cuando se presiona el boton "nuevoJugador"
+        function nuevoJugador() {
+            var nombre = document.getElementById("nombre").value;
+            if (nombre!=""){
 
+                jugadores.push(nombre);
+                M.toast({
+                    html: 'Jugador: "'+nombre+'" añadido',
+                    classes: 'rounded green'
+                });
+                document.getElementById("nombre").value = "";
+                str = "Jugadores: ";
+                str2="";
+                jugadores.forEach(e => {
+                    str += e + " ";
+                    str2+= '<li class="collection-item"><div>'+e+'<a onclick="eliminar(\''+e+'\')" class="secondary-content"><i class="material-icons">delete</i></a></div></li>';
+                });
+                document.getElementById("p").innerHTML = str;
+                document.getElementById("jugadoresDiv").innerHTML = str2;
+            }else{
+                
+            }
+        }
+        //crear una funcion "comenzar" que esconda el formulario de añadir y modifique la tabla añadiendo los jugadores como columnas
+        function comenzar() {
+            if (jugadores.length != 0) {
+
+                document.getElementById("añadir").style.display = "none";
+                thead = document.getElementById("thead");
+                var str = "<tr><th>Rondas</th>";
+                for (var i = 0; i < jugadores.length; i++) {
+                    str += "<th>" + jugadores[i] + "</th>";
+                }
+                thead.innerHTML = str + "</tr>";
+                //generar en cada row de la tabla despues del td existente por cada jugador un td con un input numerico para que el jugador pueda introducir su puntuacion
+                for (var r = 1; r < 11; r++) {
+                    var ronda = document.getElementById("ronda" + r);
+                    str = ronda.cells[0].outerHTML;
+                    for (var i = 0; i < jugadores.length; i++) {
+                        str += "<td><input onchange='calcular()'type='number' value='0' id='ronda" + r + "jugador" + i + "'></td>";
+                    }
+                    ronda.innerHTML = str;
+                }
+                document.getElementById("divPartida").style.visibility = "visible";
+            } else {
+                alert("No hay jugadores");
+            }
+        }
+        function calcular() {
+            puntuaciones = [];
+            //sumar la puntuacion de un jugador en todas las rondas;
+            for (j = 0; j < jugadores.length; j++) {
+
+
+
+                puntuacion = 0;
+                for (var r = 1; r < 11; r++) {
+
+                    puntuacion += parseInt(document.getElementById("ronda" + r + "jugador" + j).value);
+
+
+                }
+                puntuaciones.push(puntuacion);
+            }
+            str2 = "";
+            for (let i = 0; i < jugadores.length; i++) {
+                str2 += jugadores[i] + ": " + puntuaciones[i] + " - ";
+
+            }
+            document.getElementById("p").innerHTML = str2;
+        }
+        function eliminar(e) {
+            for (let i = 0; i< jugadores.length; i++) {
+                if (jugadores[i] == e) {
+                    M.toast({
+                        html: 'Jugador '+jugadores[i]+' ha sido eliminado',
+                        classes: 'rounded'
+                    });
+                    jugadores.splice(i, 1);
+                }
+               
+            }
+            str = "Jugadores: ";
+            str2="";
+            jugadores.forEach(e => {
+                str += e + " ";
+                str2+= '<li class="collection-item"><div>'+e+'<a onclick="eliminar(\''+e+'\')" class="secondary-content"><i class="material-icons">delete</i></a></div></li>';
+            });
+            document.getElementById("p").innerHTML = str;
+            document.getElementById("jugadoresDiv").innerHTML = str2;
+        }
+    </script>
 
 </body>
 
