@@ -85,7 +85,7 @@ var jugadores = [];
                 jugador.puntuacion = jugador.ronda1 + jugador.ronda2 + jugador.ronda3 + jugador.ronda4 + jugador.ronda5 + jugador.ronda6 + jugador.ronda7 + jugador.ronda8 + jugador.ronda9 + jugador.ronda10;
 
             });
-
+            document.getElementsById("p").innerHTML=""
             jugadores.forEach(j => {
                 document.getElementById("p").innerHTML += j.nombre + ": " + j.puntuacion;
                 if (j.id != jugadores[jugadores.length - 1].id) {
