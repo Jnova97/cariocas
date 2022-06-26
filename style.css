@@ -1,0 +1,14 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Lobster', cursive;
+}
+
+th,
+td,.collection-item {
+    font-family: 'Caveat', cursive;
+    font-size: xx-large;
+}
