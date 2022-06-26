@@ -168,10 +168,12 @@ var jugadores = [];
                 } else {
                     if (confirm("¿Desea eliminar la partida?")) {
                         localStorage.removeItem("jugadores");
+                        document.getElementById("nombre").focus();
                         M.toast({
                             html: 'Partida eliminada',
                             classes: 'rounded red lighten-2 black-text'
                         });
+
                     }
                 }
 
